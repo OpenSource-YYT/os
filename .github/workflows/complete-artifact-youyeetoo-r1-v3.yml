@@ -20,7 +20,7 @@ jobs:
             armbian_release: trixie
     steps:
       - name: "Build Armbian"
-        uses: armbian/build@v24.11.0-trunk.109
+        uses: armbian/build@v24.2.1
         with:
           #armbian_token:              "${{ secrets.GITHUB_TOKEN }}"
           armbian_target:             "build"
@@ -35,7 +35,7 @@ jobs:
         with:
           path: build/output/images/*
         continue-on-error: true
-
+        
   create_release:
     name: "Create GitHub Release"
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
       - name: "Download all artifacts"
         uses: actions/download-artifact@v3
         with:
-          path: ./artifacts/*
+          path: ./artifacts/
 
       - name: "Create GitHub release"
         uses: actions/create-release@v1
