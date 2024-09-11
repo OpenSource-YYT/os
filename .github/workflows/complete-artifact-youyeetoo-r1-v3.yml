@@ -28,7 +28,7 @@ jobs:
           armbian_kernel_branch:      "${{ matrix.armbian_kernel_branch }}"
           armbian_ui:                 "${{ matrix.armbian_ui }}"
           armbian_board:              "youyeetoo-r1-v3"
-      continue-on-error: true 
+        continue-on-error: true 
 
       - name: "Upload build artifacts"
         uses: actions/upload-artifact@v3
