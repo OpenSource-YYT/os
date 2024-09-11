@@ -28,21 +28,13 @@ jobs:
           armbian_kernel_branch:      "${{ matrix.armbian_kernel_branch }}"
           armbian_ui:                 "${{ matrix.armbian_ui }}"
           armbian_board:              "youyeetoo-r1-v3"
-          armbian_release_title:      "Release Armbian Unofficial"
-          armbian_release_body:       |
-            Build details:
-            - Board: youyeetoo-r1-v3
-            - Release: ${{ matrix.armbian_release }}
-            - UI: ${{ matrix.armbian_ui }}
-            - Kernel: ${{ matrix.armbian_kernel_branch }}
-          armbian_pgp_key:            "${{ secrets.GPG_KEY1 }}"
-          armbian_pgp_password:       "${{ secrets.GPG_PASSPHRASE1 }}"
+        continue-on-error: true 
 
       - name: "Upload build artifacts"
         uses: actions/upload-artifact@v3
         with:
           path: build/output/images/*
-        continue-on-error: true  # Continua anche se un build fallisce
+        continue-on-error: true
 
   create_release:
     name: "Create GitHub Release"
@@ -52,7 +44,7 @@ jobs:
       - name: "Download all artifacts"
         uses: actions/download-artifact@v3
         with:
-          path: ./artifacts/*
+          path: ./artifacts/
 
       - name: "Create GitHub release"
         uses: actions/create-release@v1
