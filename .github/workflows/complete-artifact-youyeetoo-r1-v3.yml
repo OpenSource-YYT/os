@@ -1,8 +1,8 @@
 name: "Build Daily Releases (youyeetoo-r1-v3)"
 on:
   schedule:
-    - cron: "0 0 * * *" 
-  workflow_dispatch: 
+    - cron: "0 0 * * *"  
+  workflow_dispatch:
 
 jobs:
   build:
@@ -19,14 +19,10 @@ jobs:
           - armbian_ui: gnome
             armbian_release: trixie
     steps:
-      - name: "Check if build is valid"
-        run: |
-          if [[ "${{ matrix.armbian_ui }}" == "gnome" && "${{ matrix.armbian_release }}" == "trixie" ]]; then
-            echo "Skipping GNOME build for Trixie"
-            exit 0
-      - uses: armbian/build@v24.2.1
+      - name: "Build Armbian"
+        uses: armbian/build@v24.2.1
         with:
-          armbian_token:              "${{ secrets.GITHUB_TOKEN }}"
+          #armbian_token:              "${{ secrets.GITHUB_TOKEN }}"
           armbian_target:             "build"
           armbian_release:            "${{ matrix.armbian_release }}"
           armbian_kernel_branch:      "${{ matrix.armbian_kernel_branch }}"
@@ -36,8 +32,40 @@ jobs:
           armbian_release_body:       |
             Build details:
             - Board: youyeetoo-r1-v3
-            - Kernel: ${{ matrix.armbian_kernel_branch }}
             - Release: ${{ matrix.armbian_release }}
             - UI: ${{ matrix.armbian_ui }}
+            - Kernel: ${{ matrix.armbian_kernel_branch }}
           armbian_pgp_key:            "${{ secrets.GPG_KEY1 }}"
           armbian_pgp_password:       "${{ secrets.GPG_PASSPHRASE1 }}"
+
+      - name: "Upload build artifacts"
+        uses: actions/upload-artifact@v3
+        with:
+          path: build/output/images/*
+        continue-on-error: true  # Continua anche se un build fallisce
+
+  create_release:
+    name: "Create GitHub Release"
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: "Download all artifacts"
+        uses: actions/download-artifact@v3
+        with:
+          path: ./artifacts/*
+
+      - name: "Create GitHub release"
+        uses: actions/create-release@v1
+        with:
+          tag_name: "armbian-unofficial-release-$(date +%Y-%m-%d)"
+          release_name: "Release Armbian Unofficial - $(date +%Y-%m-%d)"
+          body: |
+            Build details:
+            - Board: youyeetoo-r1-v3
+            - Release: noble, bookworm, trixie
+            - UI: gnome, server
+            - Kernel: vendor, edge, current
+            This release contains all versions built for the `youyeetoo-r1-v3` board.
+          draft: false
+          prerelease: false
+          files: ./artifacts/*
