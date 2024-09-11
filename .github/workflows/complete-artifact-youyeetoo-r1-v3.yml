@@ -22,7 +22,6 @@ jobs:
       - name: "Build Armbian"
         uses: armbian/build@v24.2.1
         with:
-          #armbian_token:              "${{ secrets.GITHUB_TOKEN }}"
           armbian_target:             "build"
           armbian_release:            "${{ matrix.armbian_release }}"
           armbian_kernel_branch:      "${{ matrix.armbian_kernel_branch }}"
@@ -35,7 +34,7 @@ jobs:
         with:
           path: build/output/images/*
         continue-on-error: true
-        
+
   create_release:
     name: "Create GitHub Release"
     runs-on: ubuntu-latest
@@ -46,18 +45,21 @@ jobs:
         with:
           path: ./artifacts/
 
-      - name: "Create GitHub release"
-        uses: actions/create-release@v1
+      - name: "Create GitHub release and upload assets"
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: "armbian-unofficial-release-$(date +%Y-%m-%d)"
-          release_name: "Release Armbian Unofficial - $(date +%Y-%m-%d)"
+          tag: "armbian-unofficial-release-$(date +%Y-%m-%d)"
+          name: "Release Armbian Unofficial - $(date +%Y-%m-%d)"
+          artifacts: "./artifacts/*"
           body: |
             Build details:
-            - Board: youyeetoo-r1-v3
+            - Board: Youyeetoo R1 v3
             - Release: noble, bookworm, trixie
             - UI: gnome, server
             - Kernel: vendor, edge, current
             This release contains all versions built for the `youyeetoo-r1-v3` board.
-          draft: false
-          prerelease: false
-          files: ./artifacts/*
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          removeArtifacts: false
+          replacesArtifacts: true
+          makeLatest: true
