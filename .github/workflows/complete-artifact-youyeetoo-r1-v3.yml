@@ -20,7 +20,7 @@ jobs:
             armbian_release: trixie
     steps:
       - name: "Build Armbian"
-        uses: armbian/build@v24.2.1
+        uses: armbian/build@v24.11.0-trunk.109
         with:
           #armbian_token:              "${{ secrets.GITHUB_TOKEN }}"
           armbian_target:             "build"
@@ -28,7 +28,7 @@ jobs:
           armbian_kernel_branch:      "${{ matrix.armbian_kernel_branch }}"
           armbian_ui:                 "${{ matrix.armbian_ui }}"
           armbian_board:              "youyeetoo-r1-v3"
-        continue-on-error: true 
+      continue-on-error: true 
 
       - name: "Upload build artifacts"
         uses: actions/upload-artifact@v3
@@ -44,7 +44,7 @@ jobs:
       - name: "Download all artifacts"
         uses: actions/download-artifact@v3
         with:
-          path: ./artifacts/
+          path: ./artifacts/*
 
       - name: "Create GitHub release"
         uses: actions/create-release@v1
