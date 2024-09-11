@@ -24,7 +24,7 @@ jobs:
         with:
           armbian_target:             "build"
           armbian_release:            "${{ matrix.armbian_release }}"
-          armbian_version:            "main"
+          armbian_branch:             "main"
           armbian_kernel_branch:      "${{ matrix.armbian_kernel_branch }}"
           armbian_ui:                 "${{ matrix.armbian_ui }}"
           armbian_board:              "youyeetoo-r1-v3"
@@ -49,7 +49,7 @@ jobs:
       - name: "Create GitHub release and upload assets"
         uses: ncipollo/release-action@v1
         with:
-          tag: "armbian-unofficial-release-$(date +%Y-%m-%d)"
+          tag: "yyt"
           name: "Release Armbian Unofficial - $(date +%Y-%m-%d)"
           artifacts: "./artifacts/*"
           body: |
